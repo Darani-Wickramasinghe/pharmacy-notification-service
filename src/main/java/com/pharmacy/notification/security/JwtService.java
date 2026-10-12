@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 
 import javax.crypto.SecretKey;
 import java.nio.charset.StandardCharsets;
+import java.util.UUID;
 
 @Service
 public class JwtService {
@@ -27,15 +28,19 @@ public class JwtService {
         return extractAllClaims(token).getSubject();
     }
 
+    public UUID extractUserId(String token) {
+        String userId = extractAllClaims(token).get("userId", String.class);
+        return UUID.fromString(userId);
+    }
+
     public boolean isTokenValid(String token) {
         try {
             Claims claims = extractAllClaims(token);
-
             return claims.getSubject() != null
                     && !claims.getSubject().isBlank()
+                    && claims.get("userId", String.class) != null
                     && claims.getExpiration() != null
-                    && claims.getExpiration().getTime()
-                    > System.currentTimeMillis();
+                    && claims.getExpiration().getTime() > System.currentTimeMillis();
         } catch (JwtException | IllegalArgumentException exception) {
             return false;
         }
