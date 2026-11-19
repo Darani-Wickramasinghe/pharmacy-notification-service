@@ -5,6 +5,7 @@ import com.pharmacy.notification.entity.Notification;
 import com.pharmacy.notification.repository.NotificationRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import java.time.LocalDateTime;
 
 import java.util.List;
 import java.util.UUID;
@@ -27,5 +28,25 @@ public class NotificationService {
     public List<Notification> getUnreadNotificationsForUser(UUID userId) {
         return notificationRepository
                 .findByUserIdAndIsReadFalseOrderByCreatedAtDesc(userId);
+    }
+    @Transactional
+    public Notification createNotification(
+            UUID userId,
+            String notificationType,
+            String title,
+            String message,
+            String priority) {
+
+        Notification notification = new Notification();
+
+        notification.setUserId(userId);
+        notification.setNotificationType(notificationType);
+        notification.setTitle(title);
+        notification.setMessage(message);
+        notification.setPriority(priority);
+        notification.setIsRead(false);
+        notification.setCreatedAt(LocalDateTime.now());
+
+        return notificationRepository.save(notification);
     }
 }
