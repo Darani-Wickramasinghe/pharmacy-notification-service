@@ -17,6 +17,7 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
 import java.util.UUID;
@@ -69,6 +70,31 @@ public class NotificationController {
                 request.getTitle(),
                 request.getMessage(),
                 request.getPriority()
+        );
+    }
+    @PostMapping("/exists")
+    public boolean hasExistingNotification(
+            @RequestParam UUID userId,
+            @RequestParam String notificationType,
+            @RequestParam String batchNumber,
+            @RequestHeader("X-Internal-Secret") String providedSecret) {
+
+        boolean validSecret = MessageDigest.isEqual(
+                internalServiceSecret.getBytes(StandardCharsets.UTF_8),
+                providedSecret.getBytes(StandardCharsets.UTF_8)
+        );
+
+        if (!validSecret) {
+            throw new ResponseStatusException(
+                    HttpStatus.FORBIDDEN,
+                    "Invalid internal service credentials"
+            );
+        }
+
+        return notificationService.hasExistingNotification(
+                userId,
+                notificationType,
+                batchNumber
         );
     }
 }

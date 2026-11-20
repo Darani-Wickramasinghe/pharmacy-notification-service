@@ -15,4 +15,10 @@ public interface NotificationRepository
     List<Notification> findByUserIdAndIsReadFalseOrderByCreatedAtDesc(
             UUID userId
     );
+
+    boolean existsByUserIdAndNotificationTypeAndMessageContaining(
+            UUID userId,
+            String notificationType,
+            String messagePart
+    );
 }
