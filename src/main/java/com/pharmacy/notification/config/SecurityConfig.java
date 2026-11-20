@@ -36,6 +36,9 @@ public class SecurityConfig {
                         .requestMatchers("/actuator/health").permitAll()
                         .requestMatchers(org.springframework.http.HttpMethod.POST,
                                 "/api/notifications").permitAll()
+                        .requestMatchers(
+                                org.springframework.http.HttpMethod.POST,
+                                "/api/notifications/exists").permitAll()
                         .anyRequest().authenticated())
                 .addFilterBefore(
                         jwtAuthenticationFilter,

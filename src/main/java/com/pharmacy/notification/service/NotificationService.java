@@ -49,4 +49,16 @@ public class NotificationService {
 
         return notificationRepository.save(notification);
     }
+    public boolean hasExistingNotification(
+            UUID userId,
+            String notificationType,
+            String batchNumber) {
+
+        return notificationRepository
+                .existsByUserIdAndNotificationTypeAndMessageContaining(
+                        userId,
+                        notificationType,
+                        batchNumber
+                );
+    }
 }
